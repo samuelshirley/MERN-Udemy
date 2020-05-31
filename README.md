@@ -1,5 +1,5 @@
 # MERN-Udemy
-Full stack Udemy Course 
+MERN Stack Front To Back: Full Stack React, Redux & Node.js
 
 #NPM INSTALL
 
