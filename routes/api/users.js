@@ -78,4 +78,22 @@ router.post(
   }
 );
 
+//@route    GET /api/users
+//@desc     Gets all users
+//@access   Public
+router.get('/', async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    res.status(400).json({ errors: errors.array() });
+  }
+
+  try {
+    let users = await User.find({ user: req._id });
+    res.send(users);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server Error');
+  }
+});
+
 module.exports = router;
