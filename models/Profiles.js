@@ -1,8 +1,8 @@
 const mongoose = require('mongoose');
 
-const ProfileSchema = new mongoose.Schema({
+const ProfilesSchema = new mongoose.Schema({
   user: {
-    type: mongoose.Schema.Type.ObjectId,
+    type: mongoose.Schema.Types.ObjectId,
     ref: 'user',
   },
   company: {
@@ -25,52 +25,56 @@ const ProfileSchema = new mongoose.Schema({
   githubusername: {
     type: String,
   },
-  experiences: {
-    title: {
-      type: String,
-      required: true,
+  experiences: [
+    {
+      title: {
+        type: String,
+        required: true,
+      },
+      company: {
+        type: String,
+        required: true,
+      },
+      location: {
+        type: String,
+      },
+      from: {
+        type: String,
+        required: true,
+      },
+      current: {
+        type: Boolean,
+        default: false,
+      },
+      desription: {
+        type: String,
+      },
     },
-    company: {
-      type: String,
-      required: true,
+  ],
+  education: [
+    {
+      school: {
+        type: String,
+      },
+      fieldofstudy: {
+        type: String,
+      },
+      from: {
+        type: Date,
+        required: true,
+      },
+      to: {
+        type: Date,
+      },
+      current: {
+        type: Boolean,
+        default: false,
+      },
+      desription: {
+        type: String,
+      },
     },
-    location: {
-      type: String,
-    },
-    from: {
-      type: String,
-      required: true,
-    },
-    current: {
-      type: Boolean,
-      default: false,
-    },
-    desription: {
-      type: String,
-    },
-  },
-  education: {
-    school: {
-      type: String,
-    },
-    fieldofstudy: {
-      type: String,
-    },
-    from: {
-      type: Date,
-      required: true,
-    },
-    to: {
-      type: Date,
-    },
-    current: {
-      type: Boolean,
-      default: false,
-    },
-    desription: {
-      type: String,
-    },
-  },
+  ],
   social: {
     instagram: {
       type: String,
@@ -90,3 +94,5 @@ const ProfileSchema = new mongoose.Schema({
     default: Date.now,
   },
 });
+
+module.exports = Profile = mongoose.model('profiles', ProfilesSchema);
