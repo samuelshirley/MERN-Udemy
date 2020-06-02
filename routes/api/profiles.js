@@ -155,15 +155,156 @@ router.delete('/', auth, async (req, res) => {
 
   try {
     let profile = await Profile.findOneAndDelete({ user: req.user.id });
-    let user_id = await User.findOneAndDelete({ user: req._id });
+    await User.findOneAndDelete({ _id: req.user.id });
     if (!profile) {
       return res.status(400).json({ msg: 'No profile found' });
     }
 
-    res.send(user_id + ' was deleted');
+    res.send('User and profile were deleted');
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Server Error');
+  }
+});
+
+//@route     PUT /profiles/experience
+//@desc      Updates a users experience to the users profile
+//@access    Private
+router.put(
+  '/experience',
+  [
+    auth,
+    [
+      check('title', 'A title is required').not().isEmpty(),
+      check('company', 'A company is required').not().isEmpty(),
+      check('from', 'From date is required').not().isEmpty(),
+    ],
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      res.status(400).json({ errors: errors.array() });
+    }
+
+    const { title, company, from, to, current, description } = req.body;
+
+    const newExp = {
+      title,
+      company,
+      from,
+      to,
+      current,
+      description,
+    };
+
+    try {
+      const profile = await Profile.findOne({ user: req.user.id });
+
+      profile.experience.unshift(newExp);
+
+      await profile.save();
+
+      res.json(profile);
+    } catch (err) {
+      console.error(err.message);
+      return res.status(500).send('Server Error');
+    }
+  }
+);
+
+//@route     DELETE /profiles/experience
+//@desc      Delete a users experience on their profile
+//@access    Private
+router.delete('/experience/:exp_id', auth, async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    res.status(400).json({ errors: errors.array() });
+  }
+
+  try {
+    let profile = await Profile.findOne({ user: req.user.id });
+
+    const removeIndex = profile.experience
+      .map((item) => item.id)
+      .indexOf(req.params.exp_id);
+
+    profile.experience.splice(removeIndex, 1);
+
+    await profile.save();
+
+    res.json(profile);
+  } catch (err) {
+    console.error(err.message);
+    return res.status(500).send('Server Error');
+  }
+});
+
+//@route     PUT /profiles/education
+//@desc      Add education to a users profile
+//@access    Private
+router.put(
+  '/education',
+  [
+    auth,
+    check('school', 'School is required').not().isEmpty(),
+    check('from', 'From date is required').not().isEmpty(),
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    const { school, fieldOfStudy, from, to, current, description } = req.body;
+
+    const newEducation = {
+      school,
+      fieldOfStudy,
+      from,
+      to,
+      current,
+      description,
+    };
+
+    try {
+      const profile = await Profile.findOne({ user: req.user.id });
+
+      profile.education.unshift(newEducation);
+
+      await profile.save();
+
+      res.json(profile);
+    } catch (err) {
+      console.error(err.message);
+      return res.status(500).send('Server Error');
+    }
+  }
+);
+
+//@route      Delete /profile/education/:ed_id
+//@desc       Deletes a users education from thier profile
+//access      Private
+router.delete('/education/:ed_id', auth, async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    res.status(400).json({ error: errors.array() });
+  }
+
+  try {
+    let profile = await Profile.findOne({ user: req.user.id });
+
+    const removeIndex = profile.education
+      .map((item) => item.id)
+      .indexOf(req.params.ed_id);
+
+    profile.education.splice(removeIndex, 1);
+
+    await profile.save();
+
+    res.json(profile);
+  } catch (err) {
+    console.error(err.message);
+    return res.status(500).send('Server Error');
   }
 });
 
