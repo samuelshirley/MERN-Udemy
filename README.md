@@ -3,4 +3,4 @@ MERN Stack Front To Back: Full Stack React, Redux & Node.js
 
 #NPM INSTALL
 
-#NPM RUN SERVER
+#NPM RUN DEV
